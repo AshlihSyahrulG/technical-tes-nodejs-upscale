@@ -30,6 +30,17 @@ class Controller{
             })
         }
     }
+    static async postTask( req, res, next){
+        try {
+            const { title, Description } = req.body
+            const task = await Task.create({
+                title,Description
+            })
+            res.status(201).json(task)
+        } catch (error) {
+            next (error)
+        } 
+    }
 }
 
 
