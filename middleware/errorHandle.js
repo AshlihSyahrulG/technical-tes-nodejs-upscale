@@ -1,19 +1,18 @@
-const error = async (err, req, res, next) => {
-    console.error(err)
-    if(err.name == 'SequelizeValidationError' || err.name == "SequelizeUniqueConstraintError"){
-        const msg = err.errors[0].message
+const error = async (error, req, res, next) => {
+    console.error(error)
+    if(error.name == 'SequelizeValidationError' || error.name == "SequelizeUniqueConstraintError"){
+        const message = error.errors[0].message
         res.status(400).json({
-            msg
+            message
         })
-    } else if (err.name === "TaskNotFound"){
+    } else if (error.name === "TaskNotFound"){
         res.status(404).json({
-            msg : "Task Not Found"
+            message : "Task Not Found"
         })
     }
      else {
-        console.log(err)
         res.status(500).json({
-            msg : "Internal server error"
+            message : "Internal server error"
         })
     }
 }

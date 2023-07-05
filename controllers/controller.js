@@ -13,13 +13,10 @@ class Controller{
         const { id } = req.params
         try {
             const taskById = await Task.findByPk(id)
-            if(taskById){
-                res.status(200).json(taskById)
-            } else {
-                res.status(404).json({
-                    msg : 'Task not found'
-                })
-            }
+            if(!taskById){
+                throw { name: "TaskNotFound"}
+            } 
+            res.status(200).json(taskById)
         } catch (error) {
             next (error)
         }
@@ -35,6 +32,25 @@ class Controller{
             next (error)
         } 
     }
+    static async patchTask(req, res, next){
+        try {
+            const { id } = req.params
+            const { title, Description, Completed} = req.body
+            const findTask = await Task.findByPk(id)
+            if(!findTask){
+                throw { name: "TaskNotFound"}
+            }
+            const task = await Task.update({title, Description, Completed},{
+                where : { id },
+                returning : true
+            })
+            res.status(201).json({
+                message :`successfully update the task with id ${id}`
+            })
+        } catch (error) {
+            next(error)
+        }
+    }
     static async deleteTask(req, res, next){
         try {
             const { id } = req.params
@@ -46,7 +62,7 @@ class Controller{
                 where: {id}
             })
             res.status(200).json({
-                msg : `succesfully delete task with id ${id}`
+                message : `succesfully delete task with id ${id}`
             })
         } catch (error) {
             next (error)

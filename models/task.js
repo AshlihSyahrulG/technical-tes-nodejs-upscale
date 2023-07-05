@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
           msg:"Title cannot be empty"
         },
         notNull:{
-          msg:'Please enter the task Title.'
+          msg:"Please enter the task Title"
         }
       }
     },
