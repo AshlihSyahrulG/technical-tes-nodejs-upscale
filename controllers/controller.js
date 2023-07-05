@@ -1,18 +1,15 @@
 const { Task } = require ('../models/index')
 
 class Controller{
-    static async getTasks ( req, res){
+    static async getTasks ( req, res, next){
         try {
             const task = await Task.findAll()
             res.status(200).json(task)
         } catch (error) {
-            console.log(error)
-            res.status(500).json({
-                msg : "Internal server error"
-            })
+            next (error)
         }
     }
-    static async getTasksById (req,res){
+    static async getTasksById (req,res,next){
         const { id } = req.params
         try {
             const taskById = await Task.findByPk(id)
@@ -24,10 +21,7 @@ class Controller{
                 })
             }
         } catch (error) {
-            console.log(error)
-            res.status(500).json({
-                msg : "Internal server error"
-            })
+            next (error)
         }
     }
     static async postTask( req, res, next){
@@ -41,27 +35,21 @@ class Controller{
             next (error)
         } 
     }
-    static async deleteTask(req, res){
-        const { id } = req.params
+    static async deleteTask(req, res, next){
         try {
+            const { id } = req.params
+            const findTask = await Task.findByPk(id)
+            if (!findTask){
+                throw { name: "TaskNotFound"}
+            }
             const task = await Task.destroy({
                 where: {id}
             })
-            if(task){
-                res.status(200).json({
-                    msg : "Task success to deleted"
-                })
-            } else {
-                res.status(404).json({
-                    msg : "Task not found"
-                })
-            }
-            
-        } catch (error) {
-            console.log(error)
-            res.status(500).json({
-                msg : "Internal server error"
+            res.status(200).json({
+                msg : `succesfully delete task with id ${id}`
             })
+        } catch (error) {
+            next (error)
         }
     }
 }
